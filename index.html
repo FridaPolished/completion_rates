@@ -5,7 +5,6 @@
   <title>D3</title>
   <link rel="stylesheet" type="text/css" href="main.css">
   <script src="https://d3js.org/d3.v5.js"></script>
-  <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 </head>
 <body id="body">
@@ -68,12 +67,23 @@
     svg.selectAll("path").data(mapInfo.features)
       .enter().append("path")
       .attr("d", d => path(d))
-      .attr("stroke", "black")
+      .attr("stroke", "gray")
       .attr("fill", 
       d =>  d.properties.total ?
         colorScale(d.properties.total) : 
         "white"
-      )
+      );
+
+    svg.selectAll('text').data(mapInfo.features)
+      .enter()
+      .append('text')
+      // .text( function(d) {
+      //   return d.total;
+      // })
+      .attr('x', d =>  console.log(d.geometry.coordinates[0]) )
+      
+      // .attr('y', d => projection([d.Longitude, d.Latitude])[1])
+      .attr('fill', 'blue')
   }
 
 </script>
