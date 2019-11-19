@@ -5,14 +5,43 @@
   <title>D3</title>
   <link rel="stylesheet" type="text/css" href="main.css">
   <script src="https://d3js.org/d3.v5.js"></script>
+  <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 </head>
-<body>
+<body id="body">
   <p>hi</p>
-  <svg width="200" height="100">
-
-
+  <svg width="700" height="700">
+    
   </svg>
-
 </body>
+<script>
+  var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+
+  d3.json('countries.geo.json').then(showData)
+
+  function showData(mapInfo) {
+    let bodyHeight = 700
+    let bodyWidth = 700
+
+    console.log(mapInfo)
+
+    let projection = d3.geoNaturalEarth1()
+      .scale(100)
+      .translate([bodyWidth / 2, bodyHeight / 2])
+
+    let path = d3.geoPath()
+      .projection(projection)
+
+    svg.selectAll("path").data(mapInfo.features)
+      .enter().append("path")
+      .attr("d", d => path(d))
+      .attr("stroke", "black")
+      .attr("fill", "none")
+  }
+
+</script>
+
  <script src="app.js"></script>
 </html>

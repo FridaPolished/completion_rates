@@ -7,12 +7,13 @@
 All data from "Completion rates"(November 2019) by [Unicef]('https://data.unicef.org/resources/dataset/education-data/').
 
 ### MVP
-  * Map
-  * Visualization of data
+  * Format the data.
+  * Render data on map.
+  * Add controls to filter the data.
 
 ### Technologies, Libraries and APIs
 
-* JavaSctipt
+* JavaScript
 * CSS
 * HTML
 * D3
