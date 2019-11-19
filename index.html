@@ -5,6 +5,7 @@
   <title>D3</title>
   <link rel="stylesheet" type="text/css" href="main.css">
   <script src="https://d3js.org/d3.v5.js"></script>
+  <script src="https://d3js.org/d3-queue.v3.min.js"></script>
   <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
 </head>
 <body id="body">
@@ -18,14 +19,43 @@
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
+  Promise.all([
+    d3.json('data.json'),
+    d3.json('countries.geo.json')
+  ]).then(showData)
+  
+  // d3.json('countries.geo.json').then(showData)
 
-  d3.json('countries.geo.json').then(showData)
+  function showData(datasources) {
+    let data = datasources[0];
+    let mapInfo = datasources[1];
+    let bodyHeight = 700;
+    let bodyWidth = 700;
 
-  function showData(mapInfo) {
-    let bodyHeight = 700
-    let bodyWidth = 700
+    // console.log(datasources)
 
-    console.log(mapInfo)
+    let dataIndex = {};
+    for (let i = 0; i < data.length; i ++){
+      // console.log(data[i]);
+      let c = data[i];
+      let country = c.country;
+      dataIndex[country] = c.total
+    }
+    
+    mapInfo.features = mapInfo.features.map( d => {
+      let country = d.properties.name
+      let total = dataIndex[country]
+      d.properties.total = total;
+      return d;
+    })
+    // console.log(mapInfo)
+    let maxTotal = d3.max(mapInfo.features, d => d.properties.total);
+    let median = d3.median(mapInfo.features, d => d.properties.total);
+
+     let colorScale = d3.scaleLinear()
+     .domain([0, median, maxTotal])
+     .range(["white", "orange", "red"]);
+
 
     let projection = d3.geoNaturalEarth1()
       .scale(100)
@@ -34,11 +64,16 @@
     let path = d3.geoPath()
       .projection(projection)
 
+
     svg.selectAll("path").data(mapInfo.features)
       .enter().append("path")
       .attr("d", d => path(d))
       .attr("stroke", "black")
-      .attr("fill", "none")
+      .attr("fill", 
+      d =>  d.properties.total ?
+        colorScale(d.properties.total) : 
+        "white"
+      )
   }
 
 </script>
