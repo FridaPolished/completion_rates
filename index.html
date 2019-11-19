@@ -6,9 +6,11 @@
   <link rel="stylesheet" type="text/css" href="main.css">
   <script src="https://d3js.org/d3.v5.js"></script>
   <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+  <script src="https://d3js.org/d3-transition.v1.min.js"></script>
 </head>
 <body id="body">
-  <p>hi</p>
+  <p>School Completion Rates 2019</p>
+  <p>Upper-secondary Education</p>
   <svg width="700" height="700">
     
   </svg>
@@ -23,19 +25,15 @@
     d3.json('countries.geo.json')
   ]).then(showData)
   
-  // d3.json('countries.geo.json').then(showData)
-
   function showData(datasources) {
     let data = datasources[0];
     let mapInfo = datasources[1];
     let bodyHeight = 700;
     let bodyWidth = 700;
 
-    // console.log(datasources)
-
+  
     let dataIndex = {};
     for (let i = 0; i < data.length; i ++){
-      // console.log(data[i]);
       let c = data[i];
       let country = c.country;
       dataIndex[country] = c.total
@@ -47,7 +45,7 @@
       d.properties.total = total;
       return d;
     })
-    // console.log(mapInfo)
+   
     let maxTotal = d3.max(mapInfo.features, d => d.properties.total);
     let median = d3.median(mapInfo.features, d => d.properties.total);
 
@@ -64,26 +62,39 @@
       .projection(projection)
 
 
-    svg.selectAll("path").data(mapInfo.features)
+  
+    
+      svg.selectAll('text')
+      .data(mapInfo.features)
+      .enter()
+      .append('text')
+      .text(function(d) { return d.properties.name })
+      .style('opacity', 0.5)
+      .attr('x', d =>  projection([d.geometry.coordinates.flat(Infinity)[0], 
+        d.geometry.coordinates.flat(Infinity)[1]])[0])
+      .attr('y', d =>  projection([d.geometry.coordinates.flat(Infinity)[0], 
+        d.geometry.coordinates.flat(Infinity)[1]])[1])
+      .attr('class', 'names')
+      .attr('fill', 'green')
+      
+    
+
+
+      svg.selectAll("path").data(mapInfo.features)
       .enter().append("path")
       .attr("d", d => path(d))
       .attr("stroke", "gray")
-      .attr("fill", 
-      d =>  d.properties.total ?
-        colorScale(d.properties.total) : 
-        "white"
-      );
+      .attr("fill",
+        d => d.properties.total ?
+          colorScale(d.properties.total) : "white" )
 
-    svg.selectAll('text').data(mapInfo.features)
-      .enter()
-      .append('text')
-      // .text( function(d) {
-      //   return d.total;
-      // })
-      .attr('x', d =>  console.log(d.geometry.coordinates[0]) )
+      svg.selectAll('text')
+      .on("click", function(d){
+        // this.style = "none",
+        this.style = "green"
+
+      })
       
-      // .attr('y', d => projection([d.Longitude, d.Latitude])[1])
-      .attr('fill', 'blue')
   }
 
 </script>

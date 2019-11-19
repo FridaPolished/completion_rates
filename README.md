@@ -17,6 +17,7 @@ All data from "Completion rates"(November 2019) by [Unicef]('https://data.unicef
 * CSS
 * HTML
 * D3
+* GEOJSON
 
 ### Implementation timeline
   * Day 1
