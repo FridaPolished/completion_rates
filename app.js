@@ -4,18 +4,20 @@ let svg = d3.select("#container")
 .attr("height", 800)
 .call(d3.zoom().on("zoom", function(){
   svg.attr("transform", d3.event.transform)
-}))
+})
+  .scaleExtent([1, 8])
+  )
 .append('g')
 
 
-Promise.all([
-  d3.json('data.json'),
-  d3.json('countries.geo.json')
-]).then(showData);
+// Promise.all([
+//   d3.json('data.json'),
+//   d3.json('countries.geo.json')
+// ]).then(showData);
 
 
 
-function showData(datasources) {
+function showData(datasources, value) {
   let data = datasources[0];
   let mapInfo = datasources[1];
   let bodyHeight = 800;
@@ -26,26 +28,39 @@ function showData(datasources) {
   for (let i = 0; i < data.length; i++) {
     let c = data[i];
     let country = c.country;
-    dataIndex[country] = c.total
+    dataIndex[country] = c[value]
   }
 
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
-    let total = dataIndex[country]
-    d.properties.total = total;
+    let valueX = dataIndex[country]
+    d.properties[value] = valueX;
     return d;
   })
 
-  let maxTotal = d3.max(mapInfo.features, function (d) { return d.properties.total });
-  let median = d3.median(mapInfo.features, function (d) { return d.properties.total });
+  let maxTotal = d3.max(mapInfo.features, function (d) { return d.properties[value] });
+  let median = d3.median(mapInfo.features, function (d) { return d.properties[value]});
 
-  let colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["yellow", "orange", "red"]);
+  let colorScale; 
+  if(value === 'total'){
+    colorScale = d3.scaleLinear()
+      .domain([0, median, maxTotal])
+      .range(["yellow", "orange", "red"]);
+  } else if (value === 'female'){
+    colorScale = d3.scaleLinear()
+      .domain([0, median, maxTotal])
+      .range(["yellow", 'rgb(200, 245, 66)', "green"]);
+  } else if (value === 'male'){
+    colorScale = d3.scaleLinear()
+      .domain([0, median, maxTotal])
+      .range(["rbg(84, 255, 212)", 'rgb(5, 171, 158)', "rbg(2, 102, 94)"]);
+  }
+
+  
 
 
   let projection = d3.geoNaturalEarth1()
-    .scale(120)
+    .scale(100)
     .translate([bodyWidth / 2, bodyHeight / 2])
 
   
@@ -83,8 +98,8 @@ function showData(datasources) {
     .attr("stroke", "gray")
     .attr("fill",
       function (d) {
-        if (d.properties.total) {
-          return colorScale(d.properties.total)
+        if (d.properties[value]) {
+          return colorScale(d.properties[value])
         }
         else {
           return "white"
@@ -94,71 +109,73 @@ function showData(datasources) {
     .on("mouseover", mouseOver)
     .append('title')
     .text(function (d) {
-      if (d.properties.total) { return d.properties.name + ' ' + d.properties.total }
+      if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
     })
     .attr("class", "title")
 }
 
-// Promise.all([
-//   d3.json('data.json'),
-//   d3.json('countries.geo.json')
-// ]).then(genderData)
 
-function genderData(datasources){
-    let data = datasources[0];
-    let mapInfo = datasources[1];
-    let bodyHeight = 800;
-    let bodyWidth = 800;
-
-
-    let dataIndex = {};
-    for (let i = 0; i < data.length; i++) {
-      let c = data[i];
-      let country = c.country;
-      dataIndex[country] = c.female
+  function displayMap(filter) {
+    
+    switch(filter){
+      case 'total':
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "total"));
+      break;
+      case "female":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "female"));
+      break;
+      case "male":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "male"));
+        break;
+      case "rural":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "rural"));
+        break;
+      case "urban":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "urban"));
+        break;
+      case "poorest":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "poorest"));
+        break;
+      case "second":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "second"));
+        break;
+      case "middle":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "middle"));
+        break;
+      case "fourth":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "fourth"));
+        break;
+      case "richest":
+        Promise.all([
+          d3.json('data.json'),
+          d3.json('countries.geo.json')
+        ]).then((data) => showData(data, "richest"));
     }
-
-    mapInfo.features = mapInfo.features.map(function (d) {
-      let country = d.properties.name
-      let female = dataIndex[country]
-      d.properties.female = female;
-      return d;
-    })
-
-    let maxTotal = d3.max(mapInfo.features, function (d) { return d.properties.female });
-    let median = d3.median(mapInfo.features, function (d) { return d.properties.female });
-
-
-
-    let colorScale = d3.scaleLinear()
-      .domain([0, median, maxTotal])
-      .range(["yellow", "green", "dark-green"]);
-
-
-
-    let projection = d3.geoNaturalEarth1()
-      .scale(120)
-      .translate([bodyWidth / 2, bodyHeight / 2])
-
-    let path = d3.geoPath()
-      .projection(projection)
-
-    svg.selectAll("path").data(mapInfo.features)
-      .enter().append("path")
-      .attr("d", function (d) { return path(d) })
-      .attr("stroke", "gray")
-      .attr("fill",
-        function (d) {
-          if (d.properties.female) {
-            return colorScale(d.properties.female)
-          }
-          else {
-            return "white"
-          }
-        })
-      .append('title')
-      .text(function (d) {
-        if (d.properties.total) { return d.properties.name + ' ' + d.properties.female }
-      })
-      .attr("class", "title")
   }

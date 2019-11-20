@@ -12,26 +12,37 @@
   <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet">
 </head>
 <body id="body">
-  <p> UNESCO School Completion Rates 2019</p>
-  <p>Upper-secondary Education</p>
-  <!-- <form class="options">
-    <input  id="total" type="radio"  name="total" value="total" checked/>
+  <h3 class="doc-title">
+    <p> UNESCO School Completion Rates 2019</p>
+    <p>Upper-secondary Education</p>
+  </h3>
+  <form class="options">
+    <label>View results</label>
     <label>
       Total
+      <input  id="total" onclick='displayMap(this.value)' type="radio"  name="total" value="total" /> 
     </label>
-    <input  id="gender" type="radio" name="gender" value="gender"/>
+    <br />
     <label>
       Gender
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="female" value="female"/> Female
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="male" value="male"/> Male
     </label>
-    <input id="residence" type="radio" name="residence" value="residence"/>
+    <br />
+    <label>Residence
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="rural" value="rural"/> Rural
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="urban" value="urban"/> Urban
+    </label>
+    <br/>
     <label>
-      Residence
+      Wealth Quintile
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="poorest" value="poorest"/> Poorest
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="second" value="second"/> Second
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="middle" value="middle"/> Middle
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="fourth" value="fourth"/> Fourth
+      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="richest" value="richest"/> Richest
     </label>
-    <input  id="wealthQuintile" type="radio" name="whealt-quintile" value="wealthQuintile"/>
-    <label>
-      Wealth quintile
-    </label>
-  </form> -->
+  </form>
   <svg id="container" width="800" height="800">
   </svg>
 </body>
