@@ -7,11 +7,32 @@
   <script src="https://d3js.org/d3.v5.js"></script>
   <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
   <script src="https://d3js.org/d3-transition.v1.min.js"></script>
+  <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+  <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet">
 </head>
 <body id="body">
   <p> UNESCO School Completion Rates 2019</p>
   <p>Upper-secondary Education</p>
-  <svg width="800" height="800">
+  <!-- <form class="options">
+    <input  id="total" type="radio"  name="total" value="total" checked/>
+    <label>
+      Total
+    </label>
+    <input  id="gender" type="radio" name="gender" value="gender"/>
+    <label>
+      Gender
+    </label>
+    <input id="residence" type="radio" name="residence" value="residence"/>
+    <label>
+      Residence
+    </label>
+    <input  id="wealthQuintile" type="radio" name="whealt-quintile" value="wealthQuintile"/>
+    <label>
+      Wealth quintile
+    </label>
+  </form> -->
+  <svg id="container" width="800" height="800">
   </svg>
 </body>
  <script src="app.js"></script>
