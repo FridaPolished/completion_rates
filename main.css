@@ -6,13 +6,6 @@ body, html {
   text-align: center;
 }
 
-.names :hover {
-  display: block;
-}
-.names {
-  /* display: none */
-}
-
 svg {
-  margin-top: -183px;
+  margin-top: -113px;
 }
