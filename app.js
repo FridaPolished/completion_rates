@@ -1,5 +1,5 @@
-let width= 800;
-let height = 800;
+let width= 900;
+let height = 900;
 let svgDx = 100;
 let svgDy = 100;
 
@@ -18,9 +18,6 @@ let svg = d3.select("#container")
 function showData(datasources, value) {
   let data = datasources[0];
   let mapInfo = datasources[1];
-  let bodyHeight = 800;
-  let bodyWidth = 800;
-
 
   let dataIndex = {};
   for (let i = 0; i < data.length; i++) {
@@ -64,13 +61,9 @@ function showData(datasources, value) {
   }
 
 
-
-
   let projection = d3.geoNaturalEarth1()
-    .scale(150)
-    .translate([bodyWidth / 2, bodyHeight / 2])
-
-  
+    .scale(170)
+    .translate([width / 2, height / 2])
 
   let path = d3.geoPath()
     .projection(projection)

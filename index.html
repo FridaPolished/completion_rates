@@ -12,13 +12,16 @@
   <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet">
 </head>
 <body id="body">
-  <h3 class="doc-title">
+  <div class="wrapper">
+  <div class="doc-title">
     <p> School Completion Rates 2019</p>
-    <p>Upper-secondary Education</p>
-    <p>Data: <a href="https://data.unicef.org/resources/dataset/education-data/">UNICEF</a></p>
-  </h3>
+    <div id="subtitle">
+      <p>Upper-secondary Education</p>
+      <p>Data: <a href="https://data.unicef.org/resources/dataset/education-data/">UNICEF</a></p>
+    </div>
+  </div>
   <form class="options">
-    <div>View results</div>
+    <div id="results">Filter results</div>
     <div>
       <label>
         Total
@@ -27,7 +30,7 @@
     </div>
     <br />
     <div>
-      Gender
+      <div class="gender">Gender</div>
       <label>
         Female
         <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="female"/> 
@@ -38,7 +41,8 @@
       </label>
     </div>
     <br />
-    <div>Residence
+    <div>
+      <div class="residence">Residence</div>
       <label>
         Rural
         <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="rural"/> 
@@ -50,7 +54,7 @@
     </div>
     <br/>
     <div>
-      Wealth Quintile
+      <div class="wealth">Wealth Quintile</div>
       <label>
         Poorest
         <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="poorest"/> 
@@ -77,6 +81,7 @@
 <!-- 
     <svg  width="800" height="800">
     </svg> -->
+  </div>
   </div>
 </body>
  <script src="app.js"></script>
