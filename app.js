@@ -67,7 +67,7 @@ function showData(datasources, value) {
 
 
   let projection = d3.geoNaturalEarth1()
-    .scale(100)
+    .scale(150)
     .translate([bodyWidth / 2, bodyHeight / 2])
 
   
