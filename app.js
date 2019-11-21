@@ -11,8 +11,8 @@ let svg = d3.select("#container")
   svg.attr("transform", d3.event.transform)
 })
 .scaleExtent([1, 6])
-.translateExtent([[svgDx, svgDy], [width -(svgDx * 2) ,height-svgDy]]))
-.append('g')
+.translateExtent([[svgDx, svgDy], [width -svgDx,height-svgDy]]))
+.append('g') 
 
 
 function showData(datasources, value) {
