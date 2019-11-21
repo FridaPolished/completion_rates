@@ -13,38 +13,71 @@
 </head>
 <body id="body">
   <h3 class="doc-title">
-    <p> UNESCO School Completion Rates 2019</p>
+    <p> School Completion Rates 2019</p>
     <p>Upper-secondary Education</p>
+    <p>Data: <a href="https://data.unicef.org/resources/dataset/education-data/">UNICEF</a></p>
   </h3>
   <form class="options">
-    <label>View results</label>
-    <label>
-      Total
-      <input  id="total" onclick='displayMap(this.value)' type="radio"  name="total" value="total" /> 
-    </label>
+    <div>View results</div>
+    <div>
+      <label>
+        Total
+        <input  id="total" onclick='displayMap(this.value)' type="radio"  name="total" value="total" /> 
+      </label>
+    </div>
     <br />
-    <label>
+    <div>
       Gender
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="female"/> Female
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="male"/> Male
-    </label>
+      <label>
+        Female
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="female"/> 
+      </label>
+      <label> 
+        Male 
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="male"/> 
+      </label>
+    </div>
     <br />
-    <label>Residence
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="rural"/> Rural
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="urban"/> Urban
-    </label>
+    <div>Residence
+      <label>
+        Rural
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="rural"/> 
+      </label>
+      <label>
+        Urban
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="urban"/>
+      </label>
+    </div>
     <br/>
-    <label>
+    <div>
       Wealth Quintile
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="poorest"/> Poorest
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="second"/> Second
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="middle"/> Middle
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="fourth"/> Fourth
-      <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="richest"/> Richest
-    </label>
+      <label>
+        Poorest
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="poorest"/> 
+      </label>
+      <label for="">
+        Second
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="second"/> 
+      </label>
+      <label for="">
+        Middle
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="middle"/> 
+      </label>
+      <label for="">
+        Fourth
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="fourth"/> 
+      </label>
+      <label for="">
+        Richest
+        <input  id="total" onclick="displayMap(this.value)" type="radio"  name="total" value="richest"/> 
+      </label>
+    </div>
   </form>
-  <svg id="container" width="800" height="800">
-  </svg>
+  <div id="container">
+<!-- 
+    <svg  width="800" height="800">
+    </svg> -->
+  </div>
 </body>
  <script src="app.js"></script>
 </html>
