@@ -10,14 +10,9 @@ let svg = d3.select("#container")
 .append('g')
 
 
-// Promise.all([
-//   d3.json('data.json'),
-//   d3.json('countries.geo.json')
-// ]).then(showData);
-
-
-
 function showData(datasources, value) {
+
+  console.log(value)
   let data = datasources[0];
   let mapInfo = datasources[1];
   let bodyHeight = 800;
@@ -46,14 +41,18 @@ function showData(datasources, value) {
     colorScale = d3.scaleLinear()
       .domain([0, median, maxTotal])
       .range(["yellow", "orange", "red"]);
-  } else if (value === 'female'){
+  } else if (value === 'female' || value === 'male' ){
     colorScale = d3.scaleLinear()
       .domain([0, median, maxTotal])
-      .range(["yellow", 'rgb(200, 245, 66)', "green"]);
-  } else if (value === 'male'){
-    colorScale = d3.scaleLinear()
+      .range(["rgb(233, 242, 205)", 'rgb(212, 230, 160)', "rgb(108, 122, 67)"]);
+  } else if (value === "rural" || value === 'urban'){
+      colorScale = d3.scaleLinear()
       .domain([0, median, maxTotal])
-      .range(["rbg(84, 255, 212)", 'rgb(5, 171, 158)', "rbg(2, 102, 94)"]);
+      .range(["rgb(229, 219, 255)", "rgb(159, 131, 242)", "rgb(77, 42, 217)"]);
+    } else {
+      colorScale = d3.scaleLinear()
+      .domain([0, median, maxTotal])
+      .range(["rgb(250, 208, 223)", "rgb(242, 62, 134)", "rgb(176, 96, 125)"]);
   }
 
   
@@ -114,9 +113,11 @@ function showData(datasources, value) {
     .attr("class", "title")
 }
 
+  
 
   function displayMap(filter) {
-    
+    d3.selectAll("path").remove()
+    console.log(filter)
     switch(filter){
       case 'total':
         Promise.all([
