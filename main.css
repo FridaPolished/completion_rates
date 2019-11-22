@@ -7,18 +7,18 @@ body, html {
   position: absolute;
   width: 100%;
   text-decoration: none;
-  color: black;
+  color: #333;
   margin-inline-start: 0px;
-    margin-inline-end: 0px;
-    margin-block-start: 0px;
-    margin-block-end: 0px;
+  margin-inline-end: 0px;
+  margin-block-start: 0px;
+  margin-block-end: 0px;
   
 }
 
 svg {
   grid-area: content;
-  margin-top: -95px;
-    margin-left: -64px;
+  margin-top: 0px;
+  margin-left: -64px;
   z-index: -10;
 }
 
@@ -58,11 +58,29 @@ path .title :hover {
 .options {
   padding: 2px;
   grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  background-color: aliceblue;
+  padding: 22px;
+}
+
+.options input:hover{
+  cursor: pointer;
+}
+
+#wealth {
+  display: flex;
+  flex-direction: column;
+}
+
+#options-title{
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .wrapper {
   display: grid;
-  grid-gap: 20px;
+  grid-gap: 0px;
   grid-template-areas: 
   "sidebar"
   "header"
@@ -96,3 +114,17 @@ path .title :hover {
 }
 
 
+#title{
+  font-size: 34px;
+}
+
+.extra-info{
+  font-size: 50px;
+  background-color: red;
+  display: block;
+  z-index: 2;
+}
+
+.legend{
+  z-index: 2;
+}

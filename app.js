@@ -1,5 +1,5 @@
 let width= 1000;
-let height = 900;
+let height = 600;
 let svgDx = 100;
 let svgDy = 100;
 
@@ -73,10 +73,10 @@ function showData(datasources, value) {
       .transition()
       .duration(200)
       .style("opacity", .8)
-    d3.select(this)
-      .transition()
-      .duration(200)
-      .style("stroke", "gray")
+    // d3.select(this)
+    //   .transition()
+    //   .duration(200)
+    //   .style("stroke", "gray")
   }
 
 
@@ -84,12 +84,11 @@ function showData(datasources, value) {
     d3.selectAll("path")
       .transition()
       .duration(200)
-      .style("opacity", .5)
+      .style("opacity", 0.2)
     d3.select(this)
       .transition()
-      .duration(200)
-      .style("opacity", 1)
-      .style("stroke", "dark-gray")
+      .duration(100)
+      .style("opacity", 5)
   }
 
   svg.selectAll("path").data(mapInfo.features)
@@ -106,23 +105,31 @@ function showData(datasources, value) {
           return "rgb(230, 230, 230)"
         }
       })
+      .attr("position", "relative")
     .on("mouseleave", mouseLeave)
     .on("mouseover", mouseOver)
     .append('title')
     .text(function (d) {
         if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
       })
-      .attr("id", "title")
+    .attr("id", "title")
+
+    // appendInfo();
+  }
+
+  function appendInfo(){
+
+    
   }
 
 
   function appendLegend(min, median, max, color1, color2, color3){
-    svg.append("circle").attr("cx", 10).attr("cy", 130).attr("r", 6).style("fill", `${color3}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("circle").attr("cx", 10).attr("cy", 160).attr("r", 6).style("fill", `${color2}`).attr('class', "legend")
-    svg.append("circle").attr("cx", 10).attr("cy", 190).attr("r", 6).style("fill", `${color1}`).attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 130).text(`Maximum ${max}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 160).text(`Median ${median}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 190).text(`Minimum ${min}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
+    svg.append("circle").attr("cx", 10).attr("cy", 50).attr("r", 6).style("fill", `${color3}`).attr('class', "legend").attr("position", "absolute")
+    svg.append("circle").attr("cx", 10).attr("cy", 80).attr("r", 6).style("fill", `${color2}`).attr('class', "legend").attr("position", "absolute")
+    svg.append("circle").attr("cx", 10).attr("cy", 111).attr("r", 6).style("fill", `${color1}`).attr('class', "legend").attr("position", "absolute")
+    svg.append("text").attr("x", 20).attr("y", 50).text(`Maximum ${max}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
+    svg.append("text").attr("x", 20).attr("y", 80).text(`Median ${median}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
+    svg.append("text").attr("x", 20).attr("y", 111).text(`Minimum ${min}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
   }
 
 
