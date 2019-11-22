@@ -144,3 +144,24 @@ img {
   width: 4%;
   height: 4%;
 }
+
+button:hover{
+  cursor: pointer;
+  background-color: darkgray;
+  color: white;
+  font-weight: bold;
+}
+
+button{
+  font-size: 16px;
+   background-color: #187ed2;
+  color: white;
+  border-radius: 15px;
+  font-weight: bold;
+  padding: 5px;
+  margin: 2px;
+}
+
+#reference{
+  color: black;
+}

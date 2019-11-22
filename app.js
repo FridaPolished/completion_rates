@@ -110,14 +110,8 @@ function showData(datasources, value) {
       })
     .attr("id", "title")
 
-    // appendInfo();
-  }
-
-  function appendInfo(){
-
     
   }
-
 
   function appendLegend(min, median, max, color1, color2, color3){
     svg.append("circle").attr("cx", 10).attr("cy", 50).attr("r", 6).style("fill", `${color3}`).attr('class', "legend").attr("position", "absolute")
@@ -196,3 +190,21 @@ function showData(datasources, value) {
         ]).then((data) => showData(data, "richest"));
     }
   }
+
+var modal = document.getElementById("modal");
+var btn = document.getElementById("comp-button");
+var span = document.getElementsByClassName("close")[0];
+
+btn.onclick = function () {
+  modal.style.display = "block";
+}
+
+span.onclick = function () {
+  modal.style.display = "none";
+}
+
+window.onclick = function (event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
