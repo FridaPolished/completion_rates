@@ -1,4 +1,4 @@
-# UNESCO School Completion Rates 2019
+# UNICEF School Completion Rates 2019
 ## Upper-secondary Education
 
 ### Overview
