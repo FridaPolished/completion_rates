@@ -73,10 +73,6 @@ function showData(datasources, value) {
       .transition()
       .duration(200)
       .style("opacity", .8)
-    // d3.select(this)
-    //   .transition()
-    //   .duration(200)
-    //   .style("stroke", "gray")
   }
 
 

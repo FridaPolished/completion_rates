@@ -1,4 +1,4 @@
-# UNESCO School Completion Rates 2019
+# UNICEF School Completion Rates 2019
 ## Upper-secondary Education
 
 ### Overview
@@ -6,6 +6,9 @@
   Completion rates provides a data visualization for the completion rates from upper secondary education around the world.
 
 All data from "Completion rates"(November 2019) by [Unicef](https://data.unicef.org/resources/dataset/education-data/)
+
+
+Visit the live site [here](https://fridapolished.github.io/)
 
 ### MVP
   * Format the data.

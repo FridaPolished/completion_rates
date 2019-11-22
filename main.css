@@ -18,7 +18,7 @@ body, html {
 svg {
   grid-area: content;
   margin-top: 0px;
-  margin-left: -64px;
+  margin-left: 0px;
   z-index: -10;
 }
 
@@ -127,4 +127,20 @@ path .title :hover {
 
 .legend{
   z-index: 2;
+}
+
+footer {
+  border-top: 4px solid #0d739c;
+  
+}
+
+img {
+  max-width: 100px;
+  max-height: 100px;
+  padding: 10px;
+}
+
+#linkedin{
+  width: 4%;
+  height: 4%;
 }
