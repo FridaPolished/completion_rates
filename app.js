@@ -1,4 +1,4 @@
-let width= 900;
+let width= 1000;
 let height = 900;
 let svgDx = 100;
 let svgDy = 100;
@@ -99,7 +99,7 @@ function showData(datasources, value) {
     .attr("id", "country")
     .attr("fill",
       function (d) {
-        if (d.properties[value]) {
+        if (d.properties[value] && !(d.properties[value] === '-')) {
           return colorScale(d.properties[value])
         }
         else {

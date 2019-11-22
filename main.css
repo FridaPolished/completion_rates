@@ -1,26 +1,25 @@
 body, html {
   margin: 0;
   padding: 0;
-  /* font-family: Arial, Helvetica, sans-serif; */
   font-size: 0.95em;
   text-align: center;
   font-family: 'Cairo', sans-serif;
   position: absolute;
   width: 100%;
   text-decoration: none;
-  /* display: flex; */
   color: black;
+  margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
   
 }
 
 svg {
   grid-area: content;
-  /* position: relative; */
-  margin-top: -130px;
-  /* flex-direction: column; */
+  margin-top: -95px;
+    margin-left: -64px;
   z-index: -10;
- /* background-color: rgb(199, 221, 248); */
-  /* opacity: 0.5; */ 
 }
 
 .doc-title {
@@ -57,11 +56,7 @@ path .title :hover {
 }
 
 .options {
-  position: relative;
-  /* display: flex; */
-  /* flex-direction: column; */
   padding: 2px;
-  z-index: 2;
   grid-area: sidebar;
 }
 
@@ -76,10 +71,10 @@ path .title :hover {
 
 @media (min-width: 500px) {
   .wrapper {
-    grid-template-columns: 1fr 3fr;
-    grid-template-areas: 
-      "header  header"
-      "sidebar content";
+  grid-template-columns: 1fr 3fr;
+  grid-template-areas: 
+    "header  header"
+    "sidebar content";
   }
   nav ul {
     display: flex;
