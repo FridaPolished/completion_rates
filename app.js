@@ -108,10 +108,10 @@ function showData(datasources, value) {
     .text(function (d) {
         if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
       })
-    .attr("id", "title")
-
-    
+    .attr("class", "title")
   }
+
+ 
 
   function appendLegend(min, median, max, color1, color2, color3){
     svg.append("circle").attr("cx", 10).attr("cy", 50).attr("r", 6).style("fill", `${color3}`).attr('class', "legend").attr("position", "absolute")
