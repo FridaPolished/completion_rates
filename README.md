@@ -1,7 +1,16 @@
-# UNICEF School Completion Rates 2019
+# UNICEF School Completion Rates 2019 
 ## Upper-secondary Education
 
-#### Overview
+
+### Technologies, Libraries and APIs
+
+* JavaScript
+* CSS
+* HTML
+* D3
+* GeoJSON
+
+### Overview
 
   Completion rates provides a data visualization for the completion rates from upper secondary education around the world.
 
@@ -10,7 +19,7 @@ All data from "Completion rates"(November 2019) by [Unicef](https://data.unicef.
 
 Visit the live site [here](https://fridapolished.github.io/)
 
-#### Instructions
+### Instructions
   * Select a filter to display results.
   * Check the results by hovering over the coutry you are interested.
 
@@ -18,21 +27,13 @@ Visit the live site [here](https://fridapolished.github.io/)
   * Pan and zoom with your mouse scroll.
   * You can zoom in automatically with double click. 
 
-#### MVP
+### MVP
   * Format the data.
   * Render data on map.
   * Add controls to filter the data.
 
-#### Technologies, Libraries and APIs
-
-* JavaScript
-* CSS
-* HTML
-* D3
-* GEOJSON
-
   
-  #### Features
+  ### Features
 
   Displays information using color coding to represent values:
   ![colored world map representing total completion rates](https://i.imgur.com/6OR9LDH.png)
@@ -61,7 +62,7 @@ Visit the live site [here](https://fridapolished.github.io/)
     }
   ```
 
-#### Implementation timeline
+### Implementation timeline
   * Day 1
     * Define data and aproach to visualization
     * Build data file in JSON format.
