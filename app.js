@@ -15,50 +15,47 @@ let svg = d3.select("#container")
 .append('g') 
 
 
-function showData(datasources, value) {
+function showData(datasources) {
   let data = datasources[0];
   let mapInfo = datasources[1];
+
 
   let dataIndex = {};
   for (let i = 0; i < data.length; i++) {
     let c = data[i];
     let country = c.country;
-    dataIndex[country] = c[value]
+    if(c.total){
+      dataIndex[country] = data[i]
+    }
   }
 
+  //set default value
+  
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
-    let valueX = dataIndex[country]
-    d.properties[value] = valueX;
+    if(dataIndex[country]){
+      // console.log(dataIndex[country].total)
+      d.properties[total] = dataIndex[country].total;
+      d.properties['other'] = dataIndex[country];
+    }
     return d;
   })
 
-  let maxTotal = d3.max(mapInfo.features, function (d) { return d.properties[value] });
-  let median = d3.median(mapInfo.features, function (d) { return d.properties[value]});
-  let min = d3.min(mapInfo.features, function (d) { return d.properties[value]});
+  let maxTotal = d3.max(mapInfo.features, function (d) { 
+    if (d){
+      return d.properties.total
+  } 
+});
+  let median = d3.median(mapInfo.features, function (d) { return d.properties[total]});
+  let min = d3.min(mapInfo.features, function (d) { return d.properties[total]});
   
   let colorScale; 
-  if(value === 'total'){
+  
     colorScale = d3.scaleLinear()
       .domain([min, median, maxTotal])
       .range(["yellow", "orange", "red"]);
     appendLegend(min, median, maxTotal, "yellow", "orange", "red" )
-  } else if (value === 'female' || value === 'male' ){
-    colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["rgb(233, 242, 205)", 'rgb(212, 230, 160)', "rgb(108, 122, 67)"]);
-    appendLegend(min, median, maxTotal, "rgb(233, 242, 205)", 'rgb(212, 230, 160)', "rgb(108, 122, 67)" )
-  } else if (value === "rural" || value === 'urban'){
-    colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["rgb(229, 219, 255)", "rgb(159, 131, 242)", "rgb(77, 42, 217)"]);
-    appendLegend(min, median, maxTotal, "rgb(229, 219, 255)", "rgb(159, 131, 242)", "rgb(77, 42, 217)" )
-  } else {
-    colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["rgb(250, 208, 223)", "rgb(242, 62, 134)", "rgb(176, 96, 125)"]);
-    appendLegend(min, median, maxTotal, "rgb(250, 208, 223)", "rgb(242, 62, 134)", "rgb(176, 96, 125)" )
-  }
+  
 
 
   let projection = d3.geoNaturalEarth1()
@@ -88,6 +85,14 @@ function showData(datasources, value) {
   }
 
 
+  let otherValues = function (target, value) {
+    let k = value;
+    if(target[k]){
+      return ` <div class="">${k}: ${target[k]}</div>`
+    } else {
+      return ""
+    }
+  }
   //tooltip
   const tip = d3.tip()
     .attr('class', 'tip card')
@@ -95,14 +100,23 @@ function showData(datasources, value) {
     .style('padding', '10px')
     .style('background-color', 'white')
     .style('border', 'solid gray')
-
     .html(d => {
-      if (d.properties[value]) { 
-      let content = `<div >${d.properties.name}</div>`
-      content += ` <div class="">${d.properties[value]}</div>`
-      content += `<div class=""></div> `
-      return content;
-        }
+      if(d.properties.other){
+        let target = d.properties.other;
+        console.log(d.properties.other)
+        let content = `<div >${target.country}</div>`
+        content += otherValues(target, 'total')
+        content += otherValues(target, 'female')
+        content += otherValues(target, 'male')
+        content += otherValues(target, 'rural')
+        content += otherValues(target, 'urban')
+        content += otherValues(target, 'poorest')
+        content += otherValues(target, 'second')
+        content += otherValues(target, 'middle')
+        content += otherValues(target, 'fourth')
+        content += otherValues(target, 'richest')
+        return content;
+      } 
     });
 
   svg.call(tip);
@@ -115,8 +129,8 @@ function showData(datasources, value) {
     .attr("id", "country")
     .attr("fill",
       function (d) {
-        if (d.properties[value] && !(d.properties[value] === '-')) {
-          return colorScale(d.properties[value])
+        if (d.properties[total] && !(d.properties[total] === '-')) {
+          return colorScale(d.properties[total])
         }
         else {
           return "rgb(230, 230, 230)"
@@ -127,14 +141,8 @@ function showData(datasources, value) {
     .on("mouseover", mouseOver)
 
   svg.selectAll('path')
-    .on('mouseover', (d, i, n) => {
-      tip.show(d, n[i]);
-      handleMouseOver(d, i, n);
-    })
-    .on('mouseout', (d, i, n) => {
-      tip.hide();
-      // handleMouseOut(d, i, n);
-    })
+    .on('mouseover', (d, i, n) =>  tip.show(d, n[i]))
+    .on('mouseout', (d, i, n) =>  tip.hide())
   }
 
  
@@ -150,71 +158,17 @@ function showData(datasources, value) {
 
 
 
-  function displayMap(filter) {
+  function displayMap() {
+
     d3.selectAll("path").remove()
     d3.selectAll("circle").remove()
     d3.selectAll("text").remove()
-    switch(filter){
-      case 'total':
+
         Promise.all([
           d3.json('data.json'),
           d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "total"));
-      break;
-      case "female":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "female"));
-      break;
-      case "male":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "male"));
-        break;
-      case "rural":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "rural"));
-        break;
-      case "urban":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "urban"));
-        break;
-      case "poorest":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "poorest"));
-        break;
-      case "second":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "second"));
-        break;
-      case "middle":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "middle"));
-        break;
-      case "fourth":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "fourth"));
-        break;
-      case "richest":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "richest"));
-    }
+        ]).then((data) => showData(data));
+      
   }
 
 var modal = document.getElementById("modal");
@@ -233,16 +187,4 @@ window.onclick = function (event) {
   if (event.target == modal) {
     modal.style.display = "none";
   }
-}
-
-
-const handleMouseOver = (d, i, n) => {
-  d3.select(n[i])
-    .transition('chahgeSliceFill').duration(300)
-    .attr('fill', '#fff')
-}
-const handleMouseOut = (d, i, n) => {
-  d3.select(n[i])
-    .transition('changeSliceFill').duration(300)
-    .attr('fill', color(d.data.name))
 }
