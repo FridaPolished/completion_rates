@@ -91,17 +91,18 @@ function showData(datasources, value) {
   //tooltip
   const tip = d3.tip()
     .attr('class', 'tip card')
-    .attr('color', 'red')
-    .html(d => {
-      console.log(d.properties[value])
+    .style('color', 'black')
+    .style('padding', '10px')
+    .style('background-color', 'white')
+    .style('border', 'solid gray')
 
-      // if (d.properties[value]) { 
-      //   name = d.properties.name + ' ' + d.properties[value] }
-      //   })
+    .html(d => {
+      if (d.properties[value]) { 
       let content = `<div >${d.properties.name}</div>`
-      content += ` <div class="cost">${d.properties[value]}</div>`
-      content += `<div class="delete">Click to delete</div> `
+      content += ` <div class="">${d.properties[value]}</div>`
+      content += `<div class=""></div> `
       return content;
+        }
     });
 
   svg.call(tip);
@@ -124,11 +125,6 @@ function showData(datasources, value) {
       .attr("position", "relative")
     .on("mouseleave", mouseLeave)
     .on("mouseover", mouseOver)
-    // .append('title')
-    // .text(function (d) {
-    //     if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
-    //   })
-    // .attr("class", "title")
 
   svg.selectAll('path')
     .on('mouseover', (d, i, n) => {
