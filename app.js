@@ -87,6 +87,26 @@ function showData(datasources, value) {
       .style("opacity", 5)
   }
 
+
+  //tooltip
+  const tip = d3.tip()
+    .attr('class', 'tip card')
+    .attr('color', 'red')
+    .html(d => {
+      console.log(d.properties[value])
+
+      // if (d.properties[value]) { 
+      //   name = d.properties.name + ' ' + d.properties[value] }
+      //   })
+      let content = `<div >${d.properties.name}</div>`
+      content += ` <div class="cost">${d.properties[value]}</div>`
+      content += `<div class="delete">Click to delete</div> `
+      return content;
+    });
+
+  svg.call(tip);
+
+
   svg.selectAll("path").data(mapInfo.features)
     .enter().append("path")
     .attr("d", function (d) { return path(d) })
@@ -104,11 +124,21 @@ function showData(datasources, value) {
       .attr("position", "relative")
     .on("mouseleave", mouseLeave)
     .on("mouseover", mouseOver)
-    .append('title')
-    .text(function (d) {
-        if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
-      })
-    .attr("class", "title")
+    // .append('title')
+    // .text(function (d) {
+    //     if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
+    //   })
+    // .attr("class", "title")
+
+  svg.selectAll('path')
+    .on('mouseover', (d, i, n) => {
+      tip.show(d, n[i]);
+      handleMouseOver(d, i, n);
+    })
+    .on('mouseout', (d, i, n) => {
+      tip.hide();
+      // handleMouseOut(d, i, n);
+    })
   }
 
  
@@ -207,4 +237,16 @@ window.onclick = function (event) {
   if (event.target == modal) {
     modal.style.display = "none";
   }
+}
+
+
+const handleMouseOver = (d, i, n) => {
+  d3.select(n[i])
+    .transition('chahgeSliceFill').duration(300)
+    .attr('fill', '#fff')
+}
+const handleMouseOut = (d, i, n) => {
+  d3.select(n[i])
+    .transition('changeSliceFill').duration(300)
+    .attr('fill', color(d.data.name))
 }
