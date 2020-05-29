@@ -87,8 +87,9 @@ function showData(datasources) {
 
   let otherValues = function (target, value) {
     let k = value;
+    let capitalizedValue = k[0].toUpperCase() + k.slice(1);
     if(target[k]){
-      return ` <div class="">${k}: ${target[k]}</div>`
+      return ` <div class="">${capitalizedValue}: ${target[k]}</div>`
     } else {
       return ""
     }
@@ -100,16 +101,23 @@ function showData(datasources) {
     .style('padding', '10px')
     .style('background-color', 'white')
     .style('border', 'solid gray')
+    .attr("transform", 'translate(5,5)')
     .html(d => {
       if(d.properties.other){
         let target = d.properties.other;
-        console.log(d.properties.other)
-        let content = `<div >${target.country}</div>`
+        let content = `<div class="options-title" >${target.country}</div>`
         content += otherValues(target, 'total')
+        content += `<div class="options-title">Gender</div>`
         content += otherValues(target, 'female')
         content += otherValues(target, 'male')
+        if(target.rural){
+          content += `<div class="options-title">Residence</div >`
+        }
         content += otherValues(target, 'rural')
         content += otherValues(target, 'urban')
+        if(target.poorest){
+          content += `<div class="options-title">Wealth Quintile</div>`
+        }
         content += otherValues(target, 'poorest')
         content += otherValues(target, 'second')
         content += otherValues(target, 'middle')
@@ -157,9 +165,8 @@ function showData(datasources) {
   }
 
 
-
+  //gather data into main object datasource;
   function displayMap() {
-
     d3.selectAll("path").remove()
     d3.selectAll("circle").remove()
     d3.selectAll("text").remove()
@@ -167,10 +174,11 @@ function showData(datasources) {
         Promise.all([
           d3.json('data.json'),
           d3.json('countries.geo.json')
-        ]).then((data) => showData(data));
-      
+        ]).then((data) => showData(data));   
   }
 
+
+  //modal functionality
 var modal = document.getElementById("modal");
 var btn = document.getElementById("comp-button");
 var span = document.getElementsByClassName("close")[0];
@@ -188,3 +196,5 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 }
+
+window.onload = () => displayMap()

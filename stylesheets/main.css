@@ -50,9 +50,8 @@ a:visited {
   color: white;  
 }
 
-path .title :hover {
+path:hover {
   cursor: pointer;
-  font-size: 16px;
 }
 
 .options {
@@ -68,14 +67,10 @@ path .title :hover {
   cursor: pointer;
 }
 
-#wealth {
-  display: flex;
-  flex-direction: column;
-}
 
-#options-title{
+.options-title{
   font-weight: bold;
-  font-size: 18px;
+  /* font-size: 1px; */
 }
 
 .wrapper {
