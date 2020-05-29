@@ -15,52 +15,50 @@ let svg = d3.select("#container")
 .append('g') 
 
 
-function showData(datasources, value) {
+function showData(datasources) {
   let data = datasources[0];
   let mapInfo = datasources[1];
+
 
   let dataIndex = {};
   for (let i = 0; i < data.length; i++) {
     let c = data[i];
     let country = c.country;
-    dataIndex[country] = c[value]
+    if(c.total){
+      dataIndex[country] = data[i]
+    }
   }
 
+  //set default value
+  
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
-    let valueX = dataIndex[country]
-    d.properties[value] = valueX;
+    if(dataIndex[country]){
+      // console.log(dataIndex[country].total)
+      console.log(d)
+      d.properties[total] = dataIndex[country].total;
+      d.properties['other'] = dataIndex[country];
+    }
     return d;
   })
 
-  let maxTotal = d3.max(mapInfo.features, function (d) { return d.properties[value] });
-  let median = d3.median(mapInfo.features, function (d) { return d.properties[value]});
-  let min = d3.min(mapInfo.features, function (d) { return d.properties[value]});
+  let maxTotal = d3.max(mapInfo.features, function (d) { 
+    if (d){
+      return d.properties.total
+  } 
+});
+  let median = d3.median(mapInfo.features, function (d) { return d.properties[total]});
+  let min = d3.min(mapInfo.features, function (d) { return d.properties[total]});
   
   let colorScale; 
-  if(value === 'total'){
+  
     colorScale = d3.scaleLinear()
       .domain([min, median, maxTotal])
       .range(["yellow", "orange", "red"]);
     appendLegend(min, median, maxTotal, "yellow", "orange", "red" )
-  } else if (value === 'female' || value === 'male' ){
-    colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["rgb(233, 242, 205)", 'rgb(212, 230, 160)', "rgb(108, 122, 67)"]);
-    appendLegend(min, median, maxTotal, "rgb(233, 242, 205)", 'rgb(212, 230, 160)', "rgb(108, 122, 67)" )
-  } else if (value === "rural" || value === 'urban'){
-    colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["rgb(229, 219, 255)", "rgb(159, 131, 242)", "rgb(77, 42, 217)"]);
-    appendLegend(min, median, maxTotal, "rgb(229, 219, 255)", "rgb(159, 131, 242)", "rgb(77, 42, 217)" )
-  } else {
-    colorScale = d3.scaleLinear()
-    .domain([0, median, maxTotal])
-    .range(["rgb(250, 208, 223)", "rgb(242, 62, 134)", "rgb(176, 96, 125)"]);
-    appendLegend(min, median, maxTotal, "rgb(250, 208, 223)", "rgb(242, 62, 134)", "rgb(176, 96, 125)" )
-  }
+  
 
-
+  //setting scale and position for map display
   let projection = d3.geoNaturalEarth1()
     .scale(170)
     .translate([width / 2, height / 2])
@@ -68,13 +66,13 @@ function showData(datasources, value) {
   let path = d3.geoPath()
     .projection(projection)
 
+  //event listeners for effects on paths
   let mouseLeave = function (d) {
     d3.selectAll("path")
       .transition()
       .duration(200)
       .style("opacity", .8)
   }
-
 
   let mouseOver = function (d) {
     d3.selectAll("path")
@@ -87,28 +85,74 @@ function showData(datasources, value) {
       .style("opacity", 5)
   }
 
-  svg.selectAll("path").data(mapInfo.features)
+  //formatting tooltip info
+  let otherValues = function (target, value) {
+    let k = value;
+    let capitalizedValue = k[0].toUpperCase() + k.slice(1);
+    if(target[k]){
+      return ` <div class="">${capitalizedValue}: ${target[k]}</div>`
+    } else {
+      return ""
+    }
+  }
+
+  //tooltip
+  const tip = d3.tip()
+    .attr('class', 'tip card')
+    .style('color', 'black')
+    .style('padding', '10px')
+    .style('background-color', 'white')
+    .style('border', 'solid gray')
+    .html(d => {
+      if(d.properties.other){
+        let target = d.properties.other;
+        let content = `<div class="options-title" >${target.country}</div>`
+        content += otherValues(target, 'total')
+        content += `<div class="options-title">Gender</div>`
+        content += otherValues(target, 'female')
+        content += otherValues(target, 'male')
+        if(target.rural){
+          content += `<div class="options-title">Residence</div >`
+        }
+        content += otherValues(target, 'rural')
+        content += otherValues(target, 'urban')
+        if(target.poorest){
+          content += `<div class="options-title">Wealth Quintile</div>`
+        }
+        content += otherValues(target, 'poorest')
+        content += otherValues(target, 'second')
+        content += otherValues(target, 'middle')
+        content += otherValues(target, 'fourth')
+        content += otherValues(target, 'richest')
+        return content;
+      } 
+    });
+
+    
+    
+    svg.selectAll("path").data(mapInfo.features)
     .enter().append("path")
     .attr("d", function (d) { return path(d) })
     .attr("stroke", "gray")
     .attr("id", "country")
     .attr("fill",
-      function (d) {
-        if (d.properties[value] && !(d.properties[value] === '-')) {
-          return colorScale(d.properties[value])
-        }
-        else {
-          return "rgb(230, 230, 230)"
-        }
-      })
-      .attr("position", "relative")
+    function (d) {
+      if (d.properties[total] && !(d.properties[total] === '-')) {
+        return colorScale(d.properties[total])
+      }
+      else {
+        return "rgb(230, 230, 230)"
+      }
+    })
+    .attr("position", "relative")
     .on("mouseleave", mouseLeave)
     .on("mouseover", mouseOver)
-    .append('title')
-    .text(function (d) {
-        if (d.properties[value]) { return d.properties.name + ' ' + d.properties[value]}
-      })
-    .attr("class", "title")
+    
+    svg.call(tip);
+    
+    svg.selectAll('path')
+    .on('mouseover', (d, i, n) =>  tip.show(d, n[i]))
+    .on('mouseout', (d, i, n) =>  tip.hide())
   }
 
  
@@ -123,74 +167,20 @@ function showData(datasources, value) {
   }
 
 
+  //gather data into main object datasource;
+  function displayMap() {
+    // d3.selectAll("path").remove()
+    // d3.selectAll("circle").remove()
+    // d3.selectAll("text").remove()
 
-  function displayMap(filter) {
-    d3.selectAll("path").remove()
-    d3.selectAll("circle").remove()
-    d3.selectAll("text").remove()
-    switch(filter){
-      case 'total':
         Promise.all([
           d3.json('data.json'),
           d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "total"));
-      break;
-      case "female":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "female"));
-      break;
-      case "male":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "male"));
-        break;
-      case "rural":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "rural"));
-        break;
-      case "urban":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "urban"));
-        break;
-      case "poorest":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "poorest"));
-        break;
-      case "second":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "second"));
-        break;
-      case "middle":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "middle"));
-        break;
-      case "fourth":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "fourth"));
-        break;
-      case "richest":
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data, "richest"));
-    }
+        ]).then((data) => showData(data));   
   }
 
+
+  //modal functionality
 var modal = document.getElementById("modal");
 var btn = document.getElementById("comp-button");
 var span = document.getElementsByClassName("close")[0];
@@ -208,3 +198,6 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 }
+
+
+displayMap()
