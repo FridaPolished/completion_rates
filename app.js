@@ -200,4 +200,4 @@ window.onclick = function (event) {
 }
 
 
-// displayMap()
+displayMap()
