@@ -32,8 +32,6 @@ function showData(datasources) {
   }
 
   //set default value
-  
-  console.log(mapInfo)
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
     if(dataIndex[country]){
@@ -44,20 +42,26 @@ function showData(datasources) {
     return d;
   })
 
-  let maxTotal = d3.max(mapInfo.features, function (d) { 
-    if (d){
-      return d.properties.total
-  } 
-});
-  let median = d3.median(mapInfo.features, function (d) { return d.properties['total']});
-  let min = d3.min(mapInfo.features, function (d) { return d.properties['total']});
+  //set color scale values
+  let maxTotal = d3.max(mapInfo.features, (d) => {  
+    if (d) return d.properties.total;
+  });
+  let median = d3.median(mapInfo.features, d => d.properties['total']);
+  let min = d3.min(mapInfo.features, d =>  d.properties['total']);
   
-  let colorScale; 
-  
-    colorScale = d3.scaleLinear()
+  let colorScale = d3.scaleLinear()
       .domain([min, median, maxTotal])
       .range(["yellow", "orange", "red"]);
-    appendLegend(min, median, maxTotal, "yellow", "orange", "red" )
+
+
+  //legend setup
+  const legendGroup = svg.append('g')
+    .attr('transform', `translate(40, 200)`);
+
+  const legend = d3.legendColor()
+    .shape('circle')
+    .shapePadding(10)
+    .scale(colorScale);
   
 
   //setting scale and position for map display
@@ -76,7 +80,7 @@ function showData(datasources) {
       .style("opacity", .8)
    
   }
-
+  
   let mouseOver = function (d, n, i) {
     d3.selectAll("path")
     .transition()
@@ -85,9 +89,16 @@ function showData(datasources) {
     d3.select(this)
     .transition()
     .duration(100)
-    .style("opacity", 5) 
+    .style("opacity", 5)
+
+    if (d.properties['total']) tip.show(d, n[i])
+    
   }
   
+
+  legendGroup.call(legend)
+
+
   //formatting tooltip info
   let otherValues =  (target, value) => {
     let k = value;
@@ -106,30 +117,32 @@ function showData(datasources) {
   .style('padding', '10px')
   .style('background-color', 'white')
   .style('border', 'solid gray')
+  .attr('transform', `translate('${screenX}', ${screenY - 200})`)
   .html(d => {
     if(d.properties.other){
       let target = d.properties.other;
       let content = `<div class="options-title" >${target.country}</div>`
       content += otherValues(target, 'total')
-      content += `<div class="options-title">Gender</div>`
-      content += otherValues(target, 'female')
-      content += otherValues(target, 'male')
-      if(target.rural || target.urban){
-        content += `<div class="options-title">Residence</div >`
-      }
-      content += otherValues(target, 'rural')
-      content += otherValues(target, 'urban')
-      if(target.poorest|| target.richest || target.middle || target.second){
-        content += `<div class="options-title">Wealth Quintile</div>`
-      }
-      content += otherValues(target, 'poorest')
-      content += otherValues(target, 'second')
-      content += otherValues(target, 'middle')
-      content += otherValues(target, 'fourth')
-      content += otherValues(target, 'richest')
+      // content += `<div class="options-title">Gender</div>`
+      // content += otherValues(target, 'female')
+      // content += otherValues(target, 'male')
+      // if(target.rural || target.urban){
+      //   content += `<div class="options-title">Residence</div >`
+      // }
+      // content += otherValues(target, 'rural')
+      // content += otherValues(target, 'urban')
+      // if(target.poorest|| target.richest || target.middle || target.second){
+      //   content += `<div class="options-title">Wealth Quintile</div>`
+      // }
+      // content += otherValues(target, 'poorest')
+      // content += otherValues(target, 'second')
+      // content += otherValues(target, 'middle')
+      // content += otherValues(target, 'fourth')
+      // content += otherValues(target, 'richest')
       return content;
     } 
   });
+
 
     svg.selectAll("path").data(mapInfo.features)
     .enter().append("path")
@@ -146,33 +159,15 @@ function showData(datasources) {
       }
     })
     .attr("position", "relative")
-    // .on("mouseleave", mouseLeave)
-    // .on("mouseover", mouseOver)
-    .on('mouseover', (d, i, n) => {
-      if(d.properties['total']) tip.show(d, n[i])
-      mouseOver
-    })
-    .on('mouseleave', (d, i, n) => tip.hide())
-    
-    
-    // svg.select('path')
-    
-      svg.call(tip);
-
-      svg.append('g')
-  }
-
- 
-
-  function appendLegend(min, median, max, color1, color2, color3){
-    svg.append("circle").attr("cx", 10).attr("cy", 50).attr("r", 6).style("fill", `${color3}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("circle").attr("cx", 10).attr("cy", 80).attr("r", 6).style("fill", `${color2}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("circle").attr("cx", 10).attr("cy", 111).attr("r", 6).style("fill", `${color1}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("text").attr("x", 20).attr("y", 50).text(`Maximum ${max}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 80).text(`Median ${median}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 111).text(`Minimum ${min}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-  }
-
+    .on("mouseleave", mouseLeave)
+    .on("mouseover", mouseOver)
+    // .on('mouseover', (d, i, n) => {
+    //   if(d.properties['total']) tip.show(d, n[i])
+    //   mouseOver
+    // })
+    // .on('mouseleave', (d, i, n) => tip.hide())
+    svg.call(tip);
+}
 
   //gather data into main object datasource
   Promise.all([
