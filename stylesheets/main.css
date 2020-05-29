@@ -64,7 +64,7 @@ path:hover {
 }
 
 .options input:hover{
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 
@@ -72,7 +72,7 @@ path:hover {
   font-weight: bold;
   /* font-size: 1px; */
 }
-
+/* 
 .wrapper {
   display: grid;
   grid-gap: 0px;
@@ -106,7 +106,7 @@ path:hover {
    nav ul {
      flex-direction: column;
    }
-}
+} */
 
 
 .title{
@@ -160,3 +160,11 @@ button{
 #reference{
   color: black;
 }
+
+.tip {
+   /* content: "\25B6"; */
+  
+  text-align: left;
+}
+
+

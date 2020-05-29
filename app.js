@@ -18,6 +18,8 @@ let svg = d3.select("#container")
 function showData(datasources) {
   let data = datasources[0];
   let mapInfo = datasources[1];
+  // console.log(data)
+  // console.log(mapInfo)
 
 
   let dataIndex = {};
@@ -31,12 +33,12 @@ function showData(datasources) {
 
   //set default value
   
+  console.log(mapInfo)
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
     if(dataIndex[country]){
       // console.log(dataIndex[country].total)
-      console.log(d)
-      d.properties[total] = dataIndex[country].total;
+      d.properties['total'] = dataIndex[country].total;
       d.properties['other'] = dataIndex[country];
     }
     return d;
@@ -47,8 +49,8 @@ function showData(datasources) {
       return d.properties.total
   } 
 });
-  let median = d3.median(mapInfo.features, function (d) { return d.properties[total]});
-  let min = d3.min(mapInfo.features, function (d) { return d.properties[total]});
+  let median = d3.median(mapInfo.features, function (d) { return d.properties['total']});
+  let min = d3.min(mapInfo.features, function (d) { return d.properties['total']});
   
   let colorScale; 
   
@@ -72,21 +74,22 @@ function showData(datasources) {
       .transition()
       .duration(200)
       .style("opacity", .8)
+   
   }
 
-  let mouseOver = function (d) {
+  let mouseOver = function (d, n, i) {
     d3.selectAll("path")
-      .transition()
-      .duration(200)
-      .style("opacity", 0.2)
+    .transition()
+    .duration(200)
+    .style("opacity", 0.2)
     d3.select(this)
-      .transition()
-      .duration(100)
-      .style("opacity", 5)
+    .transition()
+    .duration(100)
+    .style("opacity", 5) 
   }
-
+  
   //formatting tooltip info
-  let otherValues = function (target, value) {
+  let otherValues =  (target, value) => {
     let k = value;
     let capitalizedValue = k[0].toUpperCase() + k.slice(1);
     if(target[k]){
@@ -95,41 +98,39 @@ function showData(datasources) {
       return ""
     }
   }
-
+  
   //tooltip
   const tip = d3.tip()
-    .attr('class', 'tip card')
-    .style('color', 'black')
-    .style('padding', '10px')
-    .style('background-color', 'white')
-    .style('border', 'solid gray')
-    .html(d => {
-      if(d.properties.other){
-        let target = d.properties.other;
-        let content = `<div class="options-title" >${target.country}</div>`
-        content += otherValues(target, 'total')
-        content += `<div class="options-title">Gender</div>`
-        content += otherValues(target, 'female')
-        content += otherValues(target, 'male')
-        if(target.rural){
-          content += `<div class="options-title">Residence</div >`
-        }
-        content += otherValues(target, 'rural')
-        content += otherValues(target, 'urban')
-        if(target.poorest){
-          content += `<div class="options-title">Wealth Quintile</div>`
-        }
-        content += otherValues(target, 'poorest')
-        content += otherValues(target, 'second')
-        content += otherValues(target, 'middle')
-        content += otherValues(target, 'fourth')
-        content += otherValues(target, 'richest')
-        return content;
-      } 
-    });
+  .attr('class', 'tip card')
+  .style('color', 'black')
+  .style('padding', '10px')
+  .style('background-color', 'white')
+  .style('border', 'solid gray')
+  .html(d => {
+    if(d.properties.other){
+      let target = d.properties.other;
+      let content = `<div class="options-title" >${target.country}</div>`
+      content += otherValues(target, 'total')
+      content += `<div class="options-title">Gender</div>`
+      content += otherValues(target, 'female')
+      content += otherValues(target, 'male')
+      if(target.rural || target.urban){
+        content += `<div class="options-title">Residence</div >`
+      }
+      content += otherValues(target, 'rural')
+      content += otherValues(target, 'urban')
+      if(target.poorest|| target.richest || target.middle || target.second){
+        content += `<div class="options-title">Wealth Quintile</div>`
+      }
+      content += otherValues(target, 'poorest')
+      content += otherValues(target, 'second')
+      content += otherValues(target, 'middle')
+      content += otherValues(target, 'fourth')
+      content += otherValues(target, 'richest')
+      return content;
+    } 
+  });
 
-    
-    
     svg.selectAll("path").data(mapInfo.features)
     .enter().append("path")
     .attr("d", function (d) { return path(d) })
@@ -137,22 +138,28 @@ function showData(datasources) {
     .attr("id", "country")
     .attr("fill",
     function (d) {
-      if (d.properties[total] && !(d.properties[total] === '-')) {
-        return colorScale(d.properties[total])
+      if (d.properties['total'] && !(d.properties['total'] === '-')) {
+        return colorScale(d.properties['total'])
       }
       else {
         return "rgb(230, 230, 230)"
       }
     })
     .attr("position", "relative")
-    .on("mouseleave", mouseLeave)
-    .on("mouseover", mouseOver)
+    // .on("mouseleave", mouseLeave)
+    // .on("mouseover", mouseOver)
+    .on('mouseover', (d, i, n) => {
+      if(d.properties['total']) tip.show(d, n[i])
+      mouseOver
+    })
+    .on('mouseleave', (d, i, n) => tip.hide())
     
-    svg.call(tip);
     
-    svg.selectAll('path')
-    .on('mouseover', (d, i, n) =>  tip.show(d, n[i]))
-    .on('mouseout', (d, i, n) =>  tip.hide())
+    // svg.select('path')
+    
+      svg.call(tip);
+
+      svg.append('g')
   }
 
  
@@ -167,17 +174,12 @@ function showData(datasources) {
   }
 
 
-  //gather data into main object datasource;
-  function displayMap() {
-    // d3.selectAll("path").remove()
-    // d3.selectAll("circle").remove()
-    // d3.selectAll("text").remove()
+  //gather data into main object datasource
+  Promise.all([
+    d3.json('data.json'),
+    d3.json('countries.geo.json')
+  ]).then((data) => showData(data));   
 
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data));   
-  }
 
 
   //modal functionality
@@ -199,5 +201,3 @@ window.onclick = function (event) {
   }
 }
 
-
-displayMap()
