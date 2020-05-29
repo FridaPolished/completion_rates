@@ -35,6 +35,7 @@ function showData(datasources) {
     let country = d.properties.name
     if(dataIndex[country]){
       // console.log(dataIndex[country].total)
+      console.log(d)
       d.properties[total] = dataIndex[country].total;
       d.properties['other'] = dataIndex[country];
     }
@@ -57,7 +58,7 @@ function showData(datasources) {
     appendLegend(min, median, maxTotal, "yellow", "orange", "red" )
   
 
-
+  //setting scale and position for map display
   let projection = d3.geoNaturalEarth1()
     .scale(170)
     .translate([width / 2, height / 2])
@@ -65,13 +66,13 @@ function showData(datasources) {
   let path = d3.geoPath()
     .projection(projection)
 
+  //event listeners for effects on paths
   let mouseLeave = function (d) {
     d3.selectAll("path")
       .transition()
       .duration(200)
       .style("opacity", .8)
   }
-
 
   let mouseOver = function (d) {
     d3.selectAll("path")
@@ -84,7 +85,7 @@ function showData(datasources) {
       .style("opacity", 5)
   }
 
-
+  //formatting tooltip info
   let otherValues = function (target, value) {
     let k = value;
     let capitalizedValue = k[0].toUpperCase() + k.slice(1);
@@ -94,6 +95,7 @@ function showData(datasources) {
       return ""
     }
   }
+
   //tooltip
   const tip = d3.tip()
     .attr('class', 'tip card')
@@ -101,7 +103,6 @@ function showData(datasources) {
     .style('padding', '10px')
     .style('background-color', 'white')
     .style('border', 'solid gray')
-    .attr("transform", 'translate(5,5)')
     .html(d => {
       if(d.properties.other){
         let target = d.properties.other;
@@ -127,28 +128,29 @@ function showData(datasources) {
       } 
     });
 
-  svg.call(tip);
-
-
-  svg.selectAll("path").data(mapInfo.features)
+    
+    
+    svg.selectAll("path").data(mapInfo.features)
     .enter().append("path")
     .attr("d", function (d) { return path(d) })
     .attr("stroke", "gray")
     .attr("id", "country")
     .attr("fill",
-      function (d) {
-        if (d.properties[total] && !(d.properties[total] === '-')) {
-          return colorScale(d.properties[total])
-        }
-        else {
-          return "rgb(230, 230, 230)"
-        }
-      })
-      .attr("position", "relative")
+    function (d) {
+      if (d.properties[total] && !(d.properties[total] === '-')) {
+        return colorScale(d.properties[total])
+      }
+      else {
+        return "rgb(230, 230, 230)"
+      }
+    })
+    .attr("position", "relative")
     .on("mouseleave", mouseLeave)
     .on("mouseover", mouseOver)
-
-  svg.selectAll('path')
+    
+    svg.call(tip);
+    
+    svg.selectAll('path')
     .on('mouseover', (d, i, n) =>  tip.show(d, n[i]))
     .on('mouseout', (d, i, n) =>  tip.hide())
   }
@@ -167,9 +169,9 @@ function showData(datasources) {
 
   //gather data into main object datasource;
   function displayMap() {
-    d3.selectAll("path").remove()
-    d3.selectAll("circle").remove()
-    d3.selectAll("text").remove()
+    // d3.selectAll("path").remove()
+    // d3.selectAll("circle").remove()
+    // d3.selectAll("text").remove()
 
         Promise.all([
           d3.json('data.json'),
@@ -197,4 +199,5 @@ window.onclick = function (event) {
   }
 }
 
-window.onload = () => displayMap()
+
+// displayMap()
