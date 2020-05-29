@@ -1,5 +1,5 @@
 let width= 1000;
-let height = 600;
+let height = 700;
 let svgDx = 100;
 let svgDy = 100;
 
@@ -51,7 +51,9 @@ function showData(datasources) {
   
   let colorScale = d3.scaleLinear()
       .domain([min, median, maxTotal])
-      .range(["yellow", "orange", "red"]);
+    .range(['#fc8d59',
+  '#ffffbf',
+  '#91bfdb']);
 
 
   //legend setup
@@ -61,7 +63,8 @@ function showData(datasources) {
   const legend = d3.legendColor()
     .shape('circle')
     .shapePadding(10)
-    .scale(colorScale);
+    .scale(colorScale)
+    .title('Rates');
   
 
   //setting scale and position for map display
@@ -78,7 +81,6 @@ function showData(datasources) {
       .transition()
       .duration(200)
       .style("opacity", .8)
-   
   }
   
   let mouseOver = function (d, n, i) {
@@ -90,9 +92,6 @@ function showData(datasources) {
     .transition()
     .duration(100)
     .style("opacity", 5)
-
-    if (d.properties['total']) tip.show(d, n[i])
-    
   }
   
 
@@ -117,28 +116,27 @@ function showData(datasources) {
   .style('padding', '10px')
   .style('background-color', 'white')
   .style('border', 'solid gray')
-  .attr('transform', `translate('${screenX}', ${screenY - 200})`)
   .html(d => {
     if(d.properties.other){
       let target = d.properties.other;
       let content = `<div class="options-title" >${target.country}</div>`
       content += otherValues(target, 'total')
-      // content += `<div class="options-title">Gender</div>`
-      // content += otherValues(target, 'female')
-      // content += otherValues(target, 'male')
-      // if(target.rural || target.urban){
-      //   content += `<div class="options-title">Residence</div >`
-      // }
-      // content += otherValues(target, 'rural')
-      // content += otherValues(target, 'urban')
-      // if(target.poorest|| target.richest || target.middle || target.second){
-      //   content += `<div class="options-title">Wealth Quintile</div>`
-      // }
-      // content += otherValues(target, 'poorest')
-      // content += otherValues(target, 'second')
-      // content += otherValues(target, 'middle')
-      // content += otherValues(target, 'fourth')
-      // content += otherValues(target, 'richest')
+      content += `<div class="options-title">Gender</div>`
+      content += otherValues(target, 'female')
+      content += otherValues(target, 'male')
+      if(target.rural || target.urban){
+        content += `<div class="options-title">Residence</div >`
+      }
+      content += otherValues(target, 'rural')
+      content += otherValues(target, 'urban')
+      if(target.poorest|| target.richest || target.middle || target.second){
+        content += `<div class="options-title">Wealth Quintile</div>`
+      }
+      content += otherValues(target, 'poorest')
+      content += otherValues(target, 'second')
+      content += otherValues(target, 'middle')
+      content += otherValues(target, 'fourth')
+      content += otherValues(target, 'richest')
       return content;
     } 
   });
@@ -159,13 +157,11 @@ function showData(datasources) {
       }
     })
     .attr("position", "relative")
-    .on("mouseleave", mouseLeave)
-    .on("mouseover", mouseOver)
-    // .on('mouseover', (d, i, n) => {
-    //   if(d.properties['total']) tip.show(d, n[i])
-    //   mouseOver
-    // })
-    // .on('mouseleave', (d, i, n) => tip.hide())
+    // .on("mouseleave", mouseLeave)
+    .on("mouseover", (d, i, n) => {
+      if(d.properties['total']) tip.show(d, n[i])
+    })
+    .on('mouseleave', (d, i, n) => tip.hide())
     svg.call(tip);
 }
 
