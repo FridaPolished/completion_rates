@@ -1,5 +1,5 @@
-let width= 1000;
-let height = 600;
+let width= 950;
+let height = 700;
 let svgDx = 100;
 let svgDy = 100;
 
@@ -19,7 +19,7 @@ function showData(datasources) {
   let data = datasources[0];
   let mapInfo = datasources[1];
 
-
+  
   let dataIndex = {};
   for (let i = 0; i < data.length; i++) {
     let c = data[i];
@@ -29,33 +29,38 @@ function showData(datasources) {
     }
   }
 
-  //set default value
-  
+  //set values in properties
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
     if(dataIndex[country]){
       // console.log(dataIndex[country].total)
-      console.log(d)
-      d.properties[total] = dataIndex[country].total;
+      d.properties['total'] = dataIndex[country].total;
       d.properties['other'] = dataIndex[country];
     }
     return d;
   })
 
-  let maxTotal = d3.max(mapInfo.features, function (d) { 
-    if (d){
-      return d.properties.total
-  } 
-});
-  let median = d3.median(mapInfo.features, function (d) { return d.properties[total]});
-  let min = d3.min(mapInfo.features, function (d) { return d.properties[total]});
+  //set color scale values
+  let maxTotal = d3.max(mapInfo.features, (d) => {  
+    if (d) return d.properties['total'];
+  });
+  let median = d3.median(mapInfo.features, d => d.properties['total']);
+  let min = d3.min(mapInfo.features, d =>  d.properties['total']);
   
-  let colorScale; 
-  
-    colorScale = d3.scaleLinear()
+  let colorScale = d3.scaleLinear()
       .domain([min, median, maxTotal])
-      .range(["yellow", "orange", "red"]);
-    appendLegend(min, median, maxTotal, "yellow", "orange", "red" )
+    .range(['#fc8d59', '#ffffbf', '#91bfdb']);
+
+
+  //legend setup
+  const legendGroup = svg.append('g')
+    .attr('transform', `translate(40, 200)`);
+
+  const legend = d3.legendColor()
+    .shape('circle')
+    .shapePadding(10)
+    .scale(colorScale)
+    .title('Rates');
   
 
   //setting scale and position for map display
@@ -73,20 +78,24 @@ function showData(datasources) {
       .duration(200)
       .style("opacity", .8)
   }
-
-  let mouseOver = function (d) {
+  
+  let mouseOver = function (d, n, i) {
     d3.selectAll("path")
-      .transition()
-      .duration(200)
-      .style("opacity", 0.2)
+    .transition()
+    .duration(200)
+    .style("opacity", 0.2)
     d3.select(this)
-      .transition()
-      .duration(100)
-      .style("opacity", 5)
+    .transition()
+    .duration(100)
+    .style("opacity", 5)
   }
+  
+
+  legendGroup.call(legend)
+
 
   //formatting tooltip info
-  let otherValues = function (target, value) {
+  let otherValues =  (target, value) => {
     let k = value;
     let capitalizedValue = k[0].toUpperCase() + k.slice(1);
     if(target[k]){
@@ -95,41 +104,67 @@ function showData(datasources) {
       return ""
     }
   }
-
+  
   //tooltip
   const tip = d3.tip()
-    .attr('class', 'tip card')
-    .style('color', 'black')
-    .style('padding', '10px')
-    .style('background-color', 'white')
-    .style('border', 'solid gray')
-    .html(d => {
-      if(d.properties.other){
-        let target = d.properties.other;
-        let content = `<div class="options-title" >${target.country}</div>`
-        content += otherValues(target, 'total')
-        content += `<div class="options-title">Gender</div>`
-        content += otherValues(target, 'female')
-        content += otherValues(target, 'male')
-        if(target.rural){
-          content += `<div class="options-title">Residence</div >`
-        }
-        content += otherValues(target, 'rural')
-        content += otherValues(target, 'urban')
-        if(target.poorest){
-          content += `<div class="options-title">Wealth Quintile</div>`
-        }
-        content += otherValues(target, 'poorest')
-        content += otherValues(target, 'second')
-        content += otherValues(target, 'middle')
-        content += otherValues(target, 'fourth')
-        content += otherValues(target, 'richest')
-        return content;
-      } 
-    });
+  .attr('class', 'tip card')
+  .style('color', 'black')
+  .style('padding', '10px')
+  .style('background-color', 'white')
+  .style('border', 'solid gray')
+  .html(d => {
 
-    
-    
+    //define tootip content
+    if(d.properties.other){
+      let target = d.properties.other;
+      let residence;
+      let wealth;
+      if (target.rural || target.urban) {
+        residence =
+        `<div class="options">
+            <div class="options options-title">Residence </div >
+            ${otherValues(target, 'rural')}
+           ${otherValues(target, 'urban')}
+         </div >`} 
+         else {
+           residence = ""
+         }
+
+      if (target.poorest || target.richest || target.middle || target.second) {
+        wealth =
+          `<div class="options">
+            <div class="options options-title">Wealth Quintile</div>
+              ${otherValues(target, 'poorest')}
+              ${otherValues(target, 'second')}
+              ${otherValues(target, 'middle')}
+              ${otherValues(target, 'fourth')}
+              ${otherValues(target, 'richest')}     
+        </div>`
+      } else {
+        wealth = ""
+      }
+      let content = 
+      `
+        <div class="title-country active" style="background-color:${colorScale(target.total)}" >
+          ${target.country}
+        </div>
+        <div class="options">
+            <div class=" options options-title">Total</div>
+            ${target.total}
+        </div>
+        <div class="options">
+          <div class=" options options-title">Gender</div>
+          ${otherValues(target, 'female')}
+          ${otherValues(target, 'male')}
+        </div>
+        ${residence}
+        ${wealth}
+        ` 
+      return content;
+    } 
+  });
+
+
     svg.selectAll("path").data(mapInfo.features)
     .enter().append("path")
     .attr("d", function (d) { return path(d) })
@@ -137,47 +172,28 @@ function showData(datasources) {
     .attr("id", "country")
     .attr("fill",
     function (d) {
-      if (d.properties[total] && !(d.properties[total] === '-')) {
-        return colorScale(d.properties[total])
+      if (d.properties['total'] && !(d.properties['total'] === '-')) {
+        return colorScale(d.properties['total'])
       }
       else {
         return "rgb(230, 230, 230)"
       }
     })
     .attr("position", "relative")
-    .on("mouseleave", mouseLeave)
-    .on("mouseover", mouseOver)
-    
+    // .on("mouseleave", mouseLeave)
+    .on("mouseover", (d, i, n) => {
+      if(d.properties['total']) tip.show(d, n[i])
+    })
+    .on('mouseleave', (d, i, n) => tip.hide())
     svg.call(tip);
-    
-    svg.selectAll('path')
-    .on('mouseover', (d, i, n) =>  tip.show(d, n[i]))
-    .on('mouseout', (d, i, n) =>  tip.hide())
-  }
+}
 
- 
+  //gather data into main object datasource
+  Promise.all([
+    d3.json('data.json'),
+    d3.json('countries.geo.json')
+  ]).then((data) => showData(data));   
 
-  function appendLegend(min, median, max, color1, color2, color3){
-    svg.append("circle").attr("cx", 10).attr("cy", 50).attr("r", 6).style("fill", `${color3}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("circle").attr("cx", 10).attr("cy", 80).attr("r", 6).style("fill", `${color2}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("circle").attr("cx", 10).attr("cy", 111).attr("r", 6).style("fill", `${color1}`).attr('class', "legend").attr("position", "absolute")
-    svg.append("text").attr("x", 20).attr("y", 50).text(`Maximum ${max}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 80).text(`Median ${median}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-    svg.append("text").attr("x", 20).attr("y", 111).text(`Minimum ${min}`).style("font-size", "15px").attr("alignment-baseline", "middle").attr('class', "legend")
-  }
-
-
-  //gather data into main object datasource;
-  function displayMap() {
-    // d3.selectAll("path").remove()
-    // d3.selectAll("circle").remove()
-    // d3.selectAll("text").remove()
-
-        Promise.all([
-          d3.json('data.json'),
-          d3.json('countries.geo.json')
-        ]).then((data) => showData(data));   
-  }
 
 
   //modal functionality
@@ -199,5 +215,3 @@ window.onclick = function (event) {
   }
 }
 
-
-displayMap()

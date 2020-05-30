@@ -25,8 +25,8 @@
       <p>Data: <a href="https://data.unicef.org/resources/dataset/education-data/">UNICEF</a></p>
     </div>
   </div>
-  <form class="options">
-    <button id="comp-button">Completion rate definition</button>
+  <button id="comp-button">Completion rate definition</button>
+  
     <div id= 'modal' class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -101,23 +101,12 @@
           <p>
             By sex; location; wealth quintiles; disability status; other personal and household characteristics (if possible).
           </p>
-
-       
-          <h3>
-            Source:</h3><a id="reference" href="http://uis.unesco.org/en/glossary-term/completion-rate">UNESCO</a> (2019)
+          <h3>Source:</h3><a id="reference" href="http://uis.unesco.org/en/glossary-term/completion-rate">UNESCO</a> (2019)
       </div>
     </div>
-
-    <div id="options-title">Filter results</div>
-    <div>
-      <label>
-        Total
-        <input  id="total" onclick='displayMap()' type="radio"  name="total" value="total" /> 
-      </label>
-    </div>
     <br />
-  </form>
-  <div id="container"></div>
+  <div id="container">
+  </div>
   </div>
 
   <footer>
@@ -127,5 +116,6 @@
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
   <script src="app.js"></script>
 </html>
