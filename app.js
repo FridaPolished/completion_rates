@@ -1,4 +1,4 @@
-let width= 1000;
+let width= 950;
 let height = 700;
 let svgDx = 100;
 let svgDy = 100;
@@ -42,7 +42,7 @@ function showData(datasources) {
 
   //set color scale values
   let maxTotal = d3.max(mapInfo.features, (d) => {  
-    if (d) return d.properties.total;
+    if (d) return d.properties['total'];
   });
   let median = d3.median(mapInfo.features, d => d.properties['total']);
   let min = d3.min(mapInfo.features, d =>  d.properties['total']);
@@ -113,6 +113,8 @@ function showData(datasources) {
   .style('background-color', 'white')
   .style('border', 'solid gray')
   .html(d => {
+
+    //define tootip content
     if(d.properties.other){
       let target = d.properties.other;
       let residence;
@@ -143,7 +145,9 @@ function showData(datasources) {
       }
       let content = 
       `
-        <div class="title-country active" style="background-color:${colorScale(target.total)}" >${target.country}</div>
+        <div class="title-country active" style="background-color:${colorScale(target.total)}" >
+          ${target.country}
+        </div>
         <div class="options">
             <div class=" options options-title">Total</div>
             ${target.total}
