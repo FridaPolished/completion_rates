@@ -54,24 +54,10 @@ path:hover {
   cursor: pointer;
 }
 
-.options {
-  padding: 2px;
-  grid-area: sidebar;
-  display: flex;
-  flex-direction: column;
-  background-color: aliceblue;
-  padding: 22px;
-}
-
-.options input:hover{
-  /* cursor: pointer; */
-}
 
 
-.options-title{
-  font-weight: bold;
-  /* font-size: 1px; */
-}
+
+
 /* 
 .wrapper {
   display: grid;
@@ -162,9 +148,31 @@ button{
 }
 
 .tip {
-   /* content: "\25B6"; */
-  
-  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
 }
 
+.active {
+  order: -1; 
+  flex: 1 0 100%
+}
 
+.options-container{
+  align-content: space-between;
+}
+
+.title-country {
+  font-weight: bold;
+  text-align: center;
+  display: block;
+}
+
+.options {
+  padding: 10px;
+}
+
+.options-title{
+  font-weight: bold;
+  text-align: center;
+}

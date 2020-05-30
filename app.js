@@ -18,10 +18,8 @@ let svg = d3.select("#container")
 function showData(datasources) {
   let data = datasources[0];
   let mapInfo = datasources[1];
-  // console.log(data)
-  // console.log(mapInfo)
 
-
+  
   let dataIndex = {};
   for (let i = 0; i < data.length; i++) {
     let c = data[i];
@@ -31,7 +29,7 @@ function showData(datasources) {
     }
   }
 
-  //set default value
+  //set values in properties
   mapInfo.features = mapInfo.features.map(function (d) {
     let country = d.properties.name
     if(dataIndex[country]){
@@ -51,9 +49,7 @@ function showData(datasources) {
   
   let colorScale = d3.scaleLinear()
       .domain([min, median, maxTotal])
-    .range(['#fc8d59',
-  '#ffffbf',
-  '#91bfdb']);
+    .range(['#fc8d59', '#ffffbf', '#91bfdb']);
 
 
   //legend setup
@@ -119,24 +115,47 @@ function showData(datasources) {
   .html(d => {
     if(d.properties.other){
       let target = d.properties.other;
-      let content = `<div class="options-title" >${target.country}</div>`
-      content += otherValues(target, 'total')
-      content += `<div class="options-title">Gender</div>`
-      content += otherValues(target, 'female')
-      content += otherValues(target, 'male')
-      if(target.rural || target.urban){
-        content += `<div class="options-title">Residence</div >`
+      let residence;
+      let wealth;
+      if (target.rural || target.urban) {
+        residence =
+        `<div class="options">
+            <div class="options options-title">Residence </div >
+            ${otherValues(target, 'rural')}
+           ${otherValues(target, 'urban')}
+         </div >`} 
+         else {
+           residence = ""
+         }
+
+      if (target.poorest || target.richest || target.middle || target.second) {
+        wealth =
+          `<div class="options">
+            <div class="options options-title">Wealth Quintile</div>
+              ${otherValues(target, 'poorest')}
+              ${otherValues(target, 'second')}
+              ${otherValues(target, 'middle')}
+              ${otherValues(target, 'fourth')}
+              ${otherValues(target, 'richest')}     
+        </div>`
+      } else {
+        wealth = ""
       }
-      content += otherValues(target, 'rural')
-      content += otherValues(target, 'urban')
-      if(target.poorest|| target.richest || target.middle || target.second){
-        content += `<div class="options-title">Wealth Quintile</div>`
-      }
-      content += otherValues(target, 'poorest')
-      content += otherValues(target, 'second')
-      content += otherValues(target, 'middle')
-      content += otherValues(target, 'fourth')
-      content += otherValues(target, 'richest')
+      let content = 
+      `
+        <div class="title-country active" style="background-color:${colorScale(target.total)}" >${target.country}</div>
+        <div class="options">
+            <div class=" options options-title">Total</div>
+            ${target.total}
+        </div>
+        <div class="options">
+          <div class=" options options-title">Gender</div>
+          ${otherValues(target, 'female')}
+          ${otherValues(target, 'male')}
+        </div>
+        ${residence}
+        ${wealth}
+        ` 
       return content;
     } 
   });
